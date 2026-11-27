@@ -83,14 +83,56 @@ php artisan test
 
 要改資料表時，請新增一個 migration（`php artisan make:migration ...`），不要直接改別人的 migration，以免組員的資料庫對不上。
 
-## Git 工作方式
+## Git 分支與 PR 規則
 
 老師會看每個人的 commit 紀錄，所以請各自用自己的帳號 commit。
 
-1. 每個功能開一個分支，例如 `feature/spaces-search`、`feature/reservation-form`
-2. 小步 commit，訊息寫清楚做了什麼，例如「預約表單：加入物品多選」
-3. 推上 GitHub 後開 Pull Request，請另一位組員看過再合併到 `main`
-4. 開始工作前先 `git pull` 拿最新的 `main`
+### 分支
+
+| 分支 | 用途 |
+|---|---|
+| `main` | 可以正常執行的整合版本，**不要直接 push** |
+| `feature/module1-space` | 模組一：管院空間查詢 |
+| `feature/module2-booking` | 模組二：空間/物品預約借用 |
+| `feature/module3-course` | 模組三：志願排課 |
+
+每個人在自己模組的分支上開發。如果想同時做好幾件事，也可以從自己的分支再開小分支，例如 `feature/module2-booking-form`。
+
+### 第一次設定
+
+```bash
+git fetch origin
+git switch feature/module1-space   # 換成自己的分支
+```
+
+### 日常流程
+
+1. 開始工作前，先把最新的 `main` 拉進自己的分支：
+   ```bash
+   git switch main && git pull
+   git switch feature/module1-space
+   git merge main
+   ```
+2. 小步 commit，訊息寫清楚做了什麼，例如「預約表單：加入物品多選」。
+3. `git push` 推到自己的分支。
+4. 完成一段可以用的功能（例如一個頁面、一個表單）就開 Pull Request 合併到 `main`，不要等到最後才一次合併。
+5. PR 至少要有**一位其他組員 review 並 approve** 才能合併。合併前確認 `php artisan test` 會過。
+6. 合併後再做一次步驟 1，讓自己的分支跟上 `main`。
+
+### 共用檔案
+
+下面這些檔案大家都會用到，最容易衝突。**要改之前先在群組說一聲**，改完盡快開 PR 合併：
+
+- `database/migrations/`：要改資料表就新增一個 migration，不要改已經存在的 migration
+- `database/seeders/`
+- `public/css/app.css`
+- `resources/views/layouts/`（版面樣板）
+- `routes/web.php`
+- 共用帳號相關：`app/Http/Controllers/Auth/`、`app/Http/Middleware/`、`app/Models/User.php`
+
+### 遇到衝突
+
+`git merge main` 出現衝突時，打開有衝突的檔案，保留雙方需要的程式碼，刪掉 `<<<<<<<`、`=======`、`>>>>>>>` 標記，再 `git add` 和 `git commit`。不確定別人的程式碼要不要留，就先問寫那段的組員。
 
 ## 完整款整合（最後一週）
 
